@@ -1,0 +1,861 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Paso a Paso">
+<meta name="theme-color" content="#F6F0E8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1E1918" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}html{-webkit-text-size-adjust:100%}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Paso a Paso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..700&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: una columna móvil (máx. 520px); la semana como tarjetas de día apiladas; barra de pestañas fija abajo */
+:root{
+  --bg:#F6F0E8; --surface:#FFFBF6; --sunk:#EFE6DB; --ink:#3A2F2D; --muted:#86766F; --line:#E7DACD;
+  --rose:#E2B4AC; --rose-ink:#A65D57; --rose-soft:#F6E2DD;
+  --sage:#A8BFA2; --sage-ink:#4D6C4B; --sage-soft:#E2EBDC;
+  --sand:#D9BF8B; --sand-soft:#F3E8D2;
+  --e1:#5F8A5B; --e2:#A8BFA2; --e3:#D9BF8B; --e4:#E2A59C; --e5:#B25E58; --e0:#D8CCC2;
+  --shadow:0 1px 2px rgba(58,47,45,.05),0 6px 18px rgba(58,47,45,.05);
+  --display:"Bricolage Grotesque",ui-rounded,"SF Pro Rounded",system-ui,sans-serif;
+  --body:"Figtree",-apple-system,system-ui,"Segoe UI",sans-serif;
+  --r:22px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#1E1918; --surface:#2A2321; --sunk:#231D1B; --ink:#F3E9E2; --muted:#A8978F; --line:#3D3330;
+  --rose:#C48A83; --rose-ink:#EFB5AD; --rose-soft:#3C2A28;
+  --sage:#7F9E7A; --sage-ink:#B7D2B1; --sage-soft:#28332A;
+  --sand:#C2A770; --sand-soft:#3A3122;
+  --e1:#9CC297; --e2:#6F8F6B; --e3:#C2A770; --e4:#C7847C; --e5:#EBA59D; --e0:#4A3F3B;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 6px 18px rgba(0,0,0,.18); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1E1918; --surface:#2A2321; --sunk:#231D1B; --ink:#F3E9E2; --muted:#A8978F; --line:#3D3330;
+  --rose:#C48A83; --rose-ink:#EFB5AD; --rose-soft:#3C2A28;
+  --sage:#7F9E7A; --sage-ink:#B7D2B1; --sage-soft:#28332A;
+  --sand:#C2A770; --sand-soft:#3A3122;
+  --e1:#9CC297; --e2:#6F8F6B; --e3:#C2A770; --e4:#C7847C; --e5:#EBA59D; --e0:#4A3F3B;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 6px 18px rgba(0,0,0,.18); color-scheme:dark}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--rose-ink);outline-offset:2px}
+.wrap{max-width:520px;margin:0 auto;padding-block:14px calc(110px + env(safe-area-inset-bottom,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:650;letter-spacing:-.01em;text-wrap:balance;margin:0}
+.num{font-variant-numeric:tabular-nums}
+svg.i{width:22px;height:22px;flex:none}
+
+/* Cabecera */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;padding:6px 2px 14px}
+.brand{font-family:var(--display);font-size:28px;font-weight:700;line-height:1.05}
+.brand small{display:block;font-family:var(--body);font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.02em;margin-top:4px}
+.todaychip{font-size:13px;color:var(--muted);text-align:right}
+
+/* Resumen semanal */
+.weekhead{background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);display:grid;gap:14px}
+.wnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.wnav .lbl{text-align:center;min-width:0}
+.wnav .lbl b{display:block;font-family:var(--display);font-size:19px;font-weight:650}
+.wnav .lbl span{font-size:13px;color:var(--muted)}
+.circ{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);flex:none}
+.circ:disabled{opacity:.35}
+.segs{display:flex;gap:4px}
+.segs i{flex:1;height:10px;border-radius:6px;background:var(--sunk)}
+.segs i.on{background:var(--sage)}
+.wstats{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.wstats b{color:var(--ink);font-size:17px;font-weight:650;margin-right:3px}
+.msg{font-size:15px;line-height:1.4;background:var(--rose-soft);color:var(--ink);border-radius:14px;padding:10px 12px}
+.msg.sage{background:var(--sage-soft)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--sunk);color:var(--muted)}
+.linkbtn{font-size:14px;font-weight:600;color:var(--rose-ink);padding:6px 4px}
+
+/* Días */
+.days{display:grid;gap:12px;margin-top:14px}
+.day{background:var(--surface);border-radius:var(--r);padding:14px 14px 10px;box-shadow:var(--shadow);border:1.5px solid transparent}
+.day.is-today{border-color:var(--rose)}
+.day.past{opacity:.92}
+.dhead{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px}
+.dhead .dn{font-family:var(--display);font-size:18px;font-weight:650}
+.dhead .dd{color:var(--muted);font-size:14px;margin-left:6px}
+.tag{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--rose-ink);background:var(--rose-soft);padding:3px 9px;border-radius:999px}
+.acts{display:grid;gap:8px}
+.act{display:flex;align-items:center;gap:12px;border-radius:16px;padding:8px 8px 8px 8px;background:var(--sunk)}
+.act .ico{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;flex:none}
+.tone-sage .ico{background:var(--sage-soft);color:var(--sage-ink)}
+.tone-rose .ico{background:var(--rose-soft);color:var(--rose-ink)}
+.tone-cream .ico{background:var(--sand-soft);color:var(--muted)}
+.act .ico svg{width:26px;height:26px}
+.abody{flex:1;min-width:0;text-align:left;display:grid;gap:1px;padding:2px 0}
+.aname{font-weight:650;font-size:16px}
+.ameta{font-size:14px;color:var(--muted)}
+.alog{font-size:14px;color:var(--sage-ink);font-weight:600}
+.check{width:46px;height:46px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex:none;background:var(--surface);color:transparent;transition:background .2s,border-color .2s}
+.check svg{width:22px;height:22px}
+.act.done .check{background:var(--sage-ink);border-color:var(--sage-ink);color:var(--surface)}
+.act.done .aname{text-decoration:line-through;text-decoration-color:var(--muted);text-decoration-thickness:1px}
+.act.rest{background:transparent;border:1.5px dashed var(--line)}
+.addbtn{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:var(--muted);padding:10px 4px 4px;min-height:40px}
+.empty{font-size:14px;color:var(--muted);padding:4px 2px}
+.prenote{font-size:14px;color:var(--muted);text-align:center;padding:4px 0 0}
+
+/* Tarjetas genéricas */
+.sec{margin-top:22px}
+.sec>h2{font-size:21px;margin:0 2px 10px}
+.card{background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}
+.card+.card{margin-top:12px}
+.card h3{font-size:17px;margin-bottom:4px}
+.sub{font-size:14px;color:var(--muted)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--surface);border-radius:18px;padding:14px;box-shadow:var(--shadow);min-width:0}
+.tile .k{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tile .v{font-family:var(--display);font-size:26px;font-weight:650;line-height:1.15;margin-top:4px;font-variant-numeric:tabular-nums}
+.tile .v small{font-family:var(--body);font-size:14px;font-weight:500;color:var(--muted);margin-left:3px}
+.tile .d{font-size:13px;color:var(--muted);margin-top:2px}
+.tile .d.up{color:var(--sage-ink)}
+.seg{display:flex;background:var(--sunk);border-radius:12px;padding:3px;gap:2px}
+.seg button{flex:1;min-height:36px;border-radius:9px;font-size:14px;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.ctrls{display:grid;gap:8px;margin:10px 0 6px}
+.chart{width:100%;height:auto;display:block;margin-top:6px}
+.chart text{fill:var(--muted);font-size:11px;font-family:var(--body)}
+.chart .vl{fill:var(--ink);font-weight:700}
+.tip{font-size:14px;color:var(--ink);min-height:20px;margin-top:4px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:13px;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.cmp{display:grid;gap:8px;margin-top:10px}
+.cmprow{display:grid;grid-template-columns:1fr auto auto auto;gap:10px;align-items:center;font-size:14px;padding:8px 0;border-top:1px solid var(--line)}
+.cmprow:first-child{border-top:0}
+.cmprow .h{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.cmprow .r{text-align:right;font-variant-numeric:tabular-nums}
+.good{color:var(--sage-ink);font-weight:700}
+.verdict{margin-top:8px}
+
+/* Calendario */
+.calhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.calhead b{font-family:var(--display);font-size:18px;font-weight:650}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .wd{font-size:12px;color:var(--muted);font-weight:700;padding-bottom:4px}
+.cal button{aspect-ratio:1;max-width:100%;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:14px;font-variant-numeric:tabular-nums}
+.cal button.has{background:var(--sage-soft)}
+.cal button.td{box-shadow:inset 0 0 0 2px var(--rose)}
+.cal button.out{visibility:hidden}
+.cal .dots{display:flex;gap:2px;height:6px}
+.cal .dots i{width:6px;height:6px;border-radius:50%}
+
+.hist{display:grid;gap:0}
+.hrow{display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;padding:12px 2px;border-top:1px solid var(--line);text-align:left;width:100%}
+.hrow:first-child{border-top:0}
+.hrow b{font-weight:650}
+.hrow .mini{grid-column:1/-1;height:6px;border-radius:4px;background:var(--sunk);overflow:hidden}
+.hrow .mini i{display:block;height:100%;background:var(--sage);border-radius:4px}
+
+/* Objetivos */
+.goal{display:grid;gap:10px}
+.goal .gt{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.bar{height:14px;border-radius:8px;background:var(--sunk);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--sage),var(--sage-ink));transition:width .6s ease}
+.goal.rose .bar i{background:linear-gradient(90deg,var(--rose),var(--rose-ink))}
+.gnums{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
+.gnums b{color:var(--ink)}
+.gmsg{font-size:14px;color:var(--ink);background:var(--sunk);border-radius:12px;padding:8px 10px}
+.editbtn{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--sunk);color:var(--muted);flex:none}
+
+/* Botones */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:52px;border-radius:16px;font-weight:650;font-size:16px;padding:0 16px}
+.btn.pri{background:var(--ink);color:var(--bg)}
+.btn.sec{background:var(--sunk);color:var(--ink)}
+.btn.soft{background:var(--sage-soft);color:var(--sage-ink)}
+.btn.dan{background:transparent;color:var(--rose-ink);border:1.5px solid var(--rose)}
+.btn.dan.armed{background:var(--rose-ink);color:var(--surface);border-color:var(--rose-ink)}
+.btns{display:grid;gap:10px;margin-top:6px}
+.steps{margin:6px 0 0;padding-left:20px;display:grid;gap:6px;font-size:15px}
+.note{font-size:14px;color:var(--muted);margin-top:8px}
+textarea.dump{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monospace;font-size:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--sunk);padding:10px;margin-top:10px}
+
+/* Hoja inferior */
+#sheet{position:fixed;inset:0;z-index:50}
+#sheet .scrim{position:absolute;inset:0;background:rgba(30,22,20,.42);animation:fade .2s}
+#sheet .panel{position:absolute;left:0;right:0;bottom:0;max-height:90vh;overflow:auto;background:var(--surface);border-radius:26px 26px 0 0;
+  padding:10px max(18px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));
+  max-width:560px;margin:0 auto;animation:up .25s ease;-webkit-overflow-scrolling:touch}
+#sheet .grab{width:40px;height:5px;border-radius:3px;background:var(--line);margin:0 auto 12px}
+#sheet h2{font-size:22px;margin-bottom:2px}
+.form{display:grid;gap:14px;margin-top:14px}
+.form label{display:grid;gap:6px;font-size:14px;font-weight:600;color:var(--muted)}
+.form input,.form select,.form textarea{width:100%;min-height:50px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);padding:10px 12px;font-size:16px;color:var(--ink);font-weight:500}
+.form textarea{min-height:90px;resize:vertical}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.types{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.types button{display:flex;align-items:center;gap:8px;min-height:50px;border-radius:14px;background:var(--sunk);padding:0 12px;font-weight:600;font-size:15px;text-align:left;border:1.5px solid transparent}
+.types button svg{width:22px;height:22px;flex:none}
+.types button.on{border-color:var(--ink);background:var(--surface)}
+.effs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.effs button{min-height:56px;border-radius:12px;background:var(--sunk);font-size:12px;font-weight:600;line-height:1.15;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1.5px solid transparent}
+.effs button i{width:14px;height:14px;border-radius:50%}
+.effs button.on{border-color:var(--ink);background:var(--surface)}
+.pacebox{display:flex;justify-content:space-between;align-items:center;background:var(--sage-soft);color:var(--sage-ink);border-radius:14px;padding:12px 14px;font-weight:600}
+.pacebox b{font-family:var(--display);font-size:22px;font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:14px;font-weight:600;z-index:60;animation:up .2s;max-width:90vw;text-align:center}
+
+/* Pestañas */
+nav.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);padding:6px max(10px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px))}
+nav.tabs .in{max-width:520px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr)}
+nav.tabs button{display:flex;flex-direction:column;align-items:center;gap:2px;min-height:56px;justify-content:center;font-size:12px;font-weight:600;color:var(--muted);border-radius:14px}
+nav.tabs button.on{color:var(--rose-ink)}
+nav.tabs button.on svg{stroke-width:2.1}
+
+@keyframes up{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes fade{from{opacity:0}}
+.toast{animation:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:360px){.types{grid-template-columns:1fr}.brand{font-size:24px}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Paso a Paso<small>Hacia tus 5 km</small></div>
+    <div class="todaychip" id="todaychip"></div>
+  </header>
+  <main id="view"></main>
+</div>
+<nav class="tabs" aria-label="Secciones"><div class="in" id="tabs"></div></nav>
+<div id="sheet" hidden><div class="scrim" data-x="close"></div><div class="panel" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div></div>
+<input type="file" id="fileIn" accept="application/json,.json" hidden>
+
+<script>
+(function(){
+"use strict";
+const START='2026-10-16', W0='2026-10-19', KEY='pasoapaso.v1';
+const DEF_KPM=4.66/(3017/60); // km por minuto de tu primera caminata
+
+/* ---------- utilidades de fecha y formato ---------- */
+const pad=n=>String(n).padStart(2,'0');
+const ds=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const pd=s=>{const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const add=(s,n)=>{const d=pd(s);d.setDate(d.getDate()+n);return ds(d)};
+const monday=s=>{const d=pd(s);d.setDate(d.getDate()-((d.getDay()+6)%7));return ds(d)};
+const today=()=>ds(new Date());
+const DAYS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+const DSH=['L','M','X','J','V','S','D'];
+const MON=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const MONL=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const dow=s=>(pd(s).getDay()+6)%7;
+const dshort=s=>{const d=pd(s);return d.getDate()+' '+MON[d.getMonth()]};
+const uid=()=>Math.random().toString(36).slice(2,8)+Date.now().toString(36).slice(-5);
+const sum=a=>a.reduce((x,y)=>x+(y||0),0);
+const mean=a=>a.length?sum(a)/a.length:null;
+const r1=n=>Math.round(n*10)/10;
+const nf=(n,d=2)=>Number(n).toLocaleString('es-ES',{maximumFractionDigits:d});
+const ftime=s=>{s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return h?h+':'+pad(m)+':'+pad(x):m+':'+pad(x)};
+const fmin=m=>{m=Math.round(m);return m>=60?Math.floor(m/60)+' h '+(m%60?pad(m%60)+' min':''):m+' min'};
+const fpace=spk=>{if(!spk||!isFinite(spk))return '–';let m=Math.floor(spk/60),x=Math.round(spk%60);if(x===60){m++;x=0}return m+':'+pad(x)};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const num=v=>{if(v==null)return null;v=String(v).trim().replace(',','.');if(v==='')return null;const n=parseFloat(v);return isFinite(n)&&n>=0?n:null};
+
+/* ---------- iconos ---------- */
+const P={
+  leaf:'<path d="M5 19c0-8.3 5.7-14 14-14 0 8.3-5.7 14-14 14z"/><path d="M5 19l8.5-8.5"/>',
+  feet:'<path d="M7.6 3.5c1.6 0 2.5 1.6 2.3 3.6-.2 1.9-.9 3.4-2.5 3.4S5.1 9 5.2 7.1C5.3 5 6 3.5 7.6 3.5z"/><path d="M5.6 13.2h3.8l-.3 1.9a1.6 1.6 0 0 1-3.2 0z"/><path d="M16.4 8.5c1.6 0 2.4 1.5 2.4 3.6 0 1.9-.7 3.4-2.4 3.4s-2.3-1.6-2.2-3.4c0-2.1.6-3.6 2.2-3.6z"/><path d="M14.4 18.2h3.8l-.3 1.8a1.6 1.6 0 0 1-3.2 0z"/>',
+  route:'<circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.2 18H14a3 3 0 0 0 0-6h-4a3 3 0 0 1 0-6h5.8"/>',
+  yoga:'<circle cx="12" cy="4.8" r="2"/><path d="M12 7.8v5"/><path d="M4.5 10.2c2.7 1.6 4.8 2.1 7.5 2.1s4.8-.5 7.5-2.1"/><path d="M5 19.2c2.4-2.3 4.4-3 7-3s4.6.7 7 3"/><path d="M8.5 19.2h7"/>',
+  ring:'<circle cx="12" cy="12" r="7"/><rect x="2.2" y="9.8" width="3" height="4.4" rx="1.2"/><rect x="18.8" y="9.8" width="3" height="4.4" rx="1.2"/>',
+  barre:'<path d="M3 7.5h18"/><path d="M5.5 7.5V21M18.5 7.5V21"/><path d="M10 11.5c.8 2.6 1.6 4.6 3.6 6.5"/><path d="M13.6 18l1.9.4"/>',
+  moon:'<path d="M20 14.6A8 8 0 1 1 9.4 4a6.4 6.4 0 0 0 10.6 10.6z"/>',
+  check:'<path d="M5 12.5l4.3 4.3L19 7.2"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  left:'<path d="M14.5 6l-6 6 6 6"/>',
+  right:'<path d="M9.5 6l6 6-6 6"/>',
+  pen:'<path d="M4 20l1-4.2L15.6 5.2a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8L8.2 19 4 20z"/>',
+  week:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/>',
+  stats:'<path d="M5 20V11M12 20V5M19 20v-6"/>',
+  goal:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/>',
+  data:'<path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5"/><path d="M4.5 16v2.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V16"/>'
+};
+const ic=(n,c='i')=>'<svg class="'+c+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+P[n]+'</svg>';
+
+const T={
+  walk_soft:{n:'Caminata suave',ic:'leaf',walk:1,f:.9,tone:'sage'},
+  walk_mod:{n:'Caminata moderada',ic:'feet',walk:1,f:1,tone:'sage'},
+  walk_long:{n:'Caminata larga',ic:'route',walk:1,f:1,tone:'sage'},
+  yoga:{n:'Yoga',ic:'yoga',tone:'rose'},
+  pilates:{n:'Pilates',ic:'ring',tone:'rose'},
+  barre:{n:'Barre',ic:'barre',tone:'rose'},
+  rest:{n:'Descanso',ic:'moon',rest:1,tone:'cream'}
+};
+const EFF=['Sin dato','Muy fácil','Fácil','Moderado','Difícil','Muy difícil'];
+
+/* ---------- datos ---------- */
+let S;
+function kmPerMin(){
+  const w=(S?S.acts:[]).filter(a=>a.done&&T[a.type]&&T[a.type].walk&&a.log&&a.log.km>0&&a.log.sec>0).sort((a,b)=>a.date<b.date?-1:1).slice(-5);
+  if(!w.length)return DEF_KPM;
+  return sum(w.map(a=>a.log.km))/(sum(w.map(a=>a.log.sec))/60);
+}
+function targetKm(type,dMax){const t=T[type];return t&&t.walk&&dMax?r1(dMax*kmPerMin()*t.f):null}
+function mk(date,type,a,b,extra){
+  const o={id:uid(),date,type,dMin:a??null,dMax:b??a??null,km:null,done:false,log:null};
+  o.km=targetKm(type,o.dMax);return Object.assign(o,extra||{});
+}
+function seed(){
+  S={v:1,created:today(),weeks:{'2026-10-12':{lvl:0},'2026-10-19':{lvl:0}},acts:[],goals:[],meta:{lastExport:null}};
+  S.acts=[
+    mk('2026-10-16','walk_long',50,50,{km:null,done:true,log:{km:4.66,sec:3017,hr:null,kcal:null,eff:null,notes:'Primera caminata registrada.'}}),
+    mk('2026-10-17','walk_soft',20,25),
+    mk('2026-10-18','walk_mod',30,30),
+    mk('2026-10-19','yoga',40,40),
+    mk('2026-10-20','walk_mod',30,35),
+    mk('2026-10-21','pilates',45,45),
+    mk('2026-10-22','walk_long',40,45),
+    mk('2026-10-23','barre',40,40),
+    mk('2026-10-24','walk_soft',25,30),
+    mk('2026-10-25','rest')
+  ];
+  S.goals=[
+    {id:uid(),kind:'comfort_km',title:'Caminar 5 km cómodamente',target:5},
+    {id:uid(),kind:'long_min',title:'Mejorar mi resistencia',target:60},
+    {id:uid(),kind:'week_sessions',title:'Mantener la constancia semanal',target:4},
+    {id:uid(),kind:'week_minutes',title:'Aumentar progresivamente la actividad',target:150}
+  ];
+  return S;
+}
+let storageOK=true;
+function load(){
+  try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&Array.isArray(o.acts)&&o.weeks)return o}}catch(e){storageOK=false}
+  return seed();
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));storageOK=true}catch(e){storageOK=false}}
+
+/* ---------- generación progresiva de semanas ---------- */
+const weekIdx=ws=>Math.round((pd(ws)-pd(W0))/(7*864e5));
+const LONG=[40,45,50,50,55,55,60,60,65,65,70],MOD=[30,30,35,35,35,40,40,40,45,45,45];
+function minutesFor(e){
+  e=Math.max(0,Math.min(10,e));
+  return {mod:[MOD[e],MOD[e]+5],long:[LONG[e],LONG[e]+5],soft:e>=4?[30,35]:[25,30]};
+}
+function genWeek(ws,prevWs){
+  const prev=S.weeks[prevWs]||{lvl:0};
+  const prevEnd=add(prevWs,6);
+  const walks=S.acts.filter(a=>a.date>=prevWs&&a.date<=prevEnd&&T[a.type].walk&&a.done);
+  const effs=walks.map(a=>a.log&&a.log.eff).filter(Boolean);
+  const avg=mean(effs);
+  let delta=1, why='progresa';
+  if(prevEnd<today()){
+    if(!walks.length){delta=0;why='mantiene'}
+    else if(avg!==null&&avg>=4.5){delta=-1;why='suaviza'}
+    else if(avg!==null&&avg>=4){delta=0;why='mantiene'}
+  }
+  const idx=weekIdx(ws), deload=idx>0&&idx%4===0;
+  if(deload&&delta>0)delta=0;
+  const lvl=Math.max(0,Math.min(10,prev.lvl+delta));
+  const e=deload?Math.max(0,lvl-1):lvl;
+  const m=minutesFor(e);
+  S.weeks[ws]={lvl,deload,why};
+  const d=i=>add(ws,i);
+  S.acts.push(
+    mk(d(0),'yoga',40,40), mk(d(1),'walk_mod',m.mod[0],m.mod[1]), mk(d(2),'pilates',45,45),
+    mk(d(3),'walk_soft',m.soft[0],m.soft[1]), mk(d(4),'barre',40,40), mk(d(5),'walk_long',m.long[0],m.long[1]),
+    mk(d(6),'rest')
+  );
+}
+function ensureWeek(ws){
+  if(S.weeks[ws]||ws<monday(START))return;
+  const keys=Object.keys(S.weeks).sort();let last=keys[keys.length-1];
+  while(last<ws){const nx=add(last,7);if(!S.weeks[nx])genWeek(nx,last);last=nx}
+  save();
+}
+
+/* ---------- métricas ---------- */
+const isDone=a=>a.done&&T[a.type]&&!T[a.type].rest;
+const actMin=a=>a.log&&a.log.sec?a.log.sec/60:(a.dMin&&a.dMax?(a.dMin+a.dMax)/2:(a.dMax||a.dMin||0));
+const actKm=a=>a.log&&a.log.km?a.log.km:0;
+function agg(from,to){
+  const xs=S.acts.filter(a=>isDone(a)&&a.date>=from&&a.date<=to);
+  const w=xs.filter(a=>T[a.type].walk&&a.log&&a.log.km>0&&a.log.sec>0);
+  const tkm=sum(w.map(a=>a.log.km));
+  return {n:xs.length,km:sum(xs.map(actKm)),min:sum(xs.map(actMin)),pace:tkm?sum(w.map(a=>a.log.sec))/tkm:null};
+}
+function loggedWalks(){return S.acts.filter(a=>isDone(a)&&T[a.type].walk&&a.log&&a.log.km>0).sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0)}
+function bestKm(maxEff){
+  const w=loggedWalks().filter(a=>maxEff==null||(a.log.eff&&a.log.eff<=maxEff));
+  return w.length?Math.max(...w.map(a=>a.log.km)):0;
+}
+function weekPlan(ws){
+  const we=add(ws,6);
+  const acts=S.acts.filter(a=>a.date>=ws&&a.date<=we);
+  const plan=acts.filter(a=>!T[a.type].rest);
+  return {acts,plan,done:plan.filter(a=>a.done).length,...agg(ws,we)};
+}
+
+/* ---------- estado de interfaz ---------- */
+const ui={view:'week',ws:null,calM:null,metric:'km',per:'w',confirm:null};
+function cur(){return monday(today()<START?START:today())}
+
+/* ---------- render ---------- */
+const $=s=>document.querySelector(s);
+function render(){
+  const t=pd(today());
+  $('#todaychip').textContent=DAYS[(t.getDay()+6)%7]+', '+t.getDate()+' '+MON[t.getMonth()];
+  const tabs=[['week','Semana','week'],['stats','Progreso','stats'],['goals','Objetivos','goal'],['data','Datos','data']];
+  $('#tabs').innerHTML=tabs.map(([k,l,i])=>'<button data-x="tab" data-v="'+k+'" class="'+(ui.view===k?'on':'')+'"'+(ui.view===k?' aria-current="page"':'')+'>'+ic(i)+'<span>'+l+'</span></button>').join('');
+  const v=$('#view');
+  if(ui.view==='week')v.innerHTML=vWeek();
+  else if(ui.view==='stats')v.innerHTML=vStats();
+  else if(ui.view==='goals')v.innerHTML=vGoals();
+  else v.innerHTML=vData();
+}
+
+function weekLabel(ws){
+  const a=pd(ws),b=pd(add(ws,6));
+  return a.getMonth()===b.getMonth()?a.getDate()+' – '+b.getDate()+' '+MON[b.getMonth()]:a.getDate()+' '+MON[a.getMonth()]+' – '+b.getDate()+' '+MON[b.getMonth()];
+}
+function rel(ws){
+  const c=cur(),n=Math.round((pd(ws)-pd(c))/(7*864e5));
+  return n===0?'Esta semana':n===-1?'Semana pasada':n===1?'Semana que viene':n<0?'Hace '+(-n)+' semanas':'Dentro de '+n+' semanas';
+}
+function weekMsg(ws,w){
+  const td=today(),c=cur();
+  const todays=w.acts.filter(a=>a.date===td);
+  if(ws<c)return w.done?'Esta semana sumaste '+w.done+(w.done===1?' actividad':' actividades')+(w.km?' y '+nf(w.km)+' km':'')+'. Todo cuenta.':'Semana tranquila. A veces el cuerpo pide pausa, y está bien.';
+  if(ws>c)return S.weeks[ws]&&S.weeks[ws].deload?'Semana de asimilación: algo más ligera para que tu cuerpo consolide lo ganado.':'Plan preparado. Muévelo como necesites según tus compromisos.';
+  if(w.plan.length&&w.done===w.plan.length)return 'Semana completa. Tu corazón ya lo está notando.';
+  if(todays.length&&todays.every(a=>T[a.type].rest))return 'Hoy toca descanso. Recuperar también es entrenar.';
+  if(todays.length&&todays.filter(a=>!T[a.type].rest).every(a=>a.done))return 'Lo de hoy, hecho. Disfruta del resto del día.';
+  if(w.done===0)return 'Una actividad cada vez. Empieza por la de hoy.';
+  if(w.done/w.plan.length>=.5)return 'Más de la mitad de la semana hecha. Vas muy bien.';
+  return 'Llevas '+w.done+(w.done===1?' actividad':' actividades')+(w.km?' y '+nf(w.km)+' km':'')+' esta semana. Paso a paso.';
+}
+function vWeek(){
+  if(!ui.ws)ui.ws=cur();
+  ensureWeek(ui.ws);
+  const ws=ui.ws,w=weekPlan(ws),td=today(),first=ws<=monday(START);
+  const best=bestKm(null);
+  let h='<section class="weekhead">';
+  h+='<div class="wnav"><button class="circ" data-x="wk" data-v="-1" aria-label="Semana anterior"'+(first?' disabled':'')+'>'+ic('left')+'</button>';
+  h+='<div class="lbl"><b>'+weekLabel(ws)+'</b><span>'+rel(ws)+'</span></div>';
+  h+='<button class="circ" data-x="wk" data-v="1" aria-label="Semana siguiente">'+ic('right')+'</button></div>';
+  h+='<div class="segs" aria-label="'+w.done+' de '+w.plan.length+' actividades">'+w.plan.map(a=>'<i class="'+(a.done?'on':'')+'"></i>').join('')+'</div>';
+  h+='<div class="wstats num"><span><b>'+w.done+'/'+w.plan.length+'</b>hechas</span><span><b>'+nf(w.km)+'</b>km</span><span><b>'+Math.round(w.min)+'</b>min</span></div>';
+  h+='<div class="msg'+(w.plan.length&&w.done===w.plan.length?' sage':'')+'">'+esc(weekMsg(ws,w))+'</div>';
+  const extras=[];
+  if(best>0)extras.push('<span class="pill">Récord '+nf(best)+' km'+(best<5?' · faltan '+nf(5-best)+' para 5 km':' · 5 km superados')+'</span>');
+  if(ws!==cur())extras.push('<button class="linkbtn" data-x="gotoday">Ir a hoy</button>');
+  if(extras.length)h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">'+extras.join('')+'</div>';
+  h+='</section><div class="days">';
+  if(first)h+='<p class="prenote">Tu plan empezó el viernes 16 de octubre.</p>';
+  for(let i=0;i<7;i++){
+    const d=add(ws,i);if(d<START)continue;
+    const acts=w.acts.filter(a=>a.date===d);
+    const isT=d===td;
+    h+='<article class="day'+(isT?' is-today':'')+(d<td?' past':'')+'"><div class="dhead"><div><span class="dn">'+DAYS[i]+'</span><span class="dd">'+dshort(d)+'</span></div>'+(isT?'<span class="tag">Hoy</span>':'')+'</div>';
+    h+='<div class="acts">'+(acts.length?acts.map(actRow).join(''):'<p class="empty">Día libre.</p>')+'</div>';
+    h+='<button class="addbtn" data-x="add" data-v="'+d+'">'+ic('plus')+'Añadir actividad</button></article>';
+  }
+  return h+'</div>';
+}
+function planMeta(a){
+  const t=T[a.type],p=[];
+  if(t.rest)return 'Recuperar también es avanzar';
+  if(a.dMin||a.dMax)p.push(a.dMin&&a.dMax&&a.dMin!==a.dMax?a.dMin+'–'+a.dMax+' min':(a.dMax||a.dMin)+' min');
+  if(t.walk&&a.km)p.push('objetivo '+nf(a.km,1)+' km');
+  return p.join(' · ')||'Sin duración';
+}
+function logLine(a){
+  const l=a.log;if(!l)return '';
+  const p=[];
+  if(l.km)p.push(nf(l.km)+' km');
+  if(l.sec)p.push(ftime(l.sec));
+  if(l.km&&l.sec)p.push(fpace(l.sec/l.km)+' /km');
+  if(l.eff)p.push(EFF[l.eff]);
+  return p.join(' · ');
+}
+function actRow(a){
+  const t=T[a.type]||T.walk_mod;
+  if(t.rest)return '<div class="act rest tone-cream"><button class="ico" data-x="edit" data-v="'+a.id+'" aria-label="Editar">'+ic(t.ic)+'</button><button class="abody" data-x="edit" data-v="'+a.id+'"><span class="aname">Descanso</span><span class="ameta">'+planMeta(a)+'</span></button></div>';
+  const ll=logLine(a);
+  return '<div class="act tone-'+t.tone+(a.done?' done':'')+'"><button class="ico" data-x="edit" data-v="'+a.id+'" aria-label="Editar '+t.n+'">'+ic(t.ic)+'</button>'+
+    '<button class="abody" data-x="'+(a.done?'log':'edit')+'" data-v="'+a.id+'"><span class="aname">'+t.n+'</span><span class="ameta">'+planMeta(a)+'</span>'+(ll?'<span class="alog num">'+esc(ll)+'</span>':'')+'</button>'+
+    '<button class="check" data-x="check" data-v="'+a.id+'" aria-pressed="'+(a.done?'true':'false')+'" aria-label="'+(a.done?'Completada':'Marcar como completada')+'">'+ic('check')+'</button></div>';
+}
+
+/* ---------- gráficas ---------- */
+function niceMax(v){if(v<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(v)));for(const m of [1,2,2.5,5,10])if(m*p>=v)return m*p;return 10*p}
+function barSVG(items,fmtV,fmtTick,colorOf){
+  const W=340,H=184,pl=36,pr=6,pt=20,pb=26,ih=H-pt-pb;
+  const max=niceMax(Math.max(0.0001,...items.map(i=>i.v)));
+  const n=Math.max(1,items.length),cw=(W-pl-pr)/n,bw=Math.min(26,cw*.56);
+  let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img">';
+  [0,.5,1].forEach(f=>{const y=pt+ih-f*ih;s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-width="1"'+(f?' stroke-dasharray="2 4"':'')+'/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end">'+fmtTick(max*f)+'</text>'});
+  const hi=items.reduce((b,it,i)=>it.v>(items[b]?items[b].v:-1)?i:b,0);
+  items.forEach((it,i)=>{
+    const x=pl+i*cw+(cw-bw)/2,h=it.v>0?Math.max(3,it.v/max*ih):0,y=pt+ih-h;
+    const fill=colorOf?colorOf(it,i):(it.cur?'var(--rose)':'var(--sage)');
+    if(h>0){const r=Math.min(4,h/2);s+='<rect x="'+x+'" y="'+y+'" width="'+bw+'" height="'+h+'" rx="'+r+'" fill="'+fill+'"/>';if(h>r)s+='<rect x="'+x+'" y="'+(y+h-r)+'" width="'+bw+'" height="'+r+'" fill="'+fill+'"/>'}
+    if(it.v>0&&(i===hi||it.cur))s+='<text class="vl" x="'+(x+bw/2)+'" y="'+(y-6)+'" text-anchor="middle">'+fmtV(it.v)+'</text>';
+    if(it.lab)s+='<text x="'+(pl+i*cw+cw/2)+'" y="'+(H-8)+'" text-anchor="middle">'+esc(it.lab)+'</text>';
+    s+='<rect x="'+(pl+i*cw)+'" y="'+pt+'" width="'+cw+'" height="'+(ih+pb)+'" fill="transparent" data-x="tip" data-v="'+esc(it.tip)+'"/>';
+  });
+  return s+'</svg>';
+}
+function paceSVG(ws){
+  const W=340,H=184,pl=40,pr=14,pt=20,pb=26,ih=H-pt-pb,iw=W-pl-pr;
+  const vals=ws.map(a=>a.log.sec/a.log.km);
+  let lo=Math.min(...vals),hi=Math.max(...vals);
+  lo=Math.floor((lo-20)/30)*30;hi=Math.ceil((hi+20)/30)*30;if(hi-lo<60)hi=lo+60;
+  const X=i=>pl+(ws.length===1?iw/2:i*iw/(ws.length-1)),Y=v=>pt+(v-lo)/(hi-lo)*ih; // más rápido = más arriba
+  let s='<svg class="chart" viewBox="0 0 '+W+' '+H+'" role="img">';
+  [lo,(lo+hi)/2,hi].forEach(v=>{const y=Y(v);s+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y+'" y2="'+y+'" stroke="var(--line)" stroke-dasharray="2 4"/><text x="'+(pl-6)+'" y="'+(y+4)+'" text-anchor="end">'+fpace(v)+'</text>'});
+  const pts=vals.map((v,i)=>[X(i),Y(v)]);
+  if(pts.length>1){
+    s+='<path d="M'+pts.map(p=>p.join(',')).join(' L')+' L'+pts[pts.length-1][0]+','+(pt+ih)+' L'+pts[0][0]+','+(pt+ih)+'Z" fill="var(--sage-soft)" opacity=".7"/>';
+    s+='<path d="M'+pts.map(p=>p.join(',')).join(' L')+'" fill="none" stroke="var(--sage-ink)" stroke-width="2" stroke-linejoin="round"/>';
+  }
+  const step=Math.ceil(ws.length/6);
+  pts.forEach((p,i)=>{
+    const last=i===pts.length-1,a=ws[i];
+    s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(last?5.5:4)+'" fill="'+(last?'var(--rose-ink)':'var(--sage-ink)')+'" stroke="var(--surface)" stroke-width="2"/>';
+    if(last)s+='<text class="vl" x="'+Math.min(p[0],W-pr-4)+'" y="'+(p[1]-10)+'" text-anchor="'+(ws.length>1?'end':'middle')+'">'+fpace(vals[i])+'</text>';
+    if(i%step===0||last){const d=pd(a.date);s+='<text x="'+p[0]+'" y="'+(H-8)+'" text-anchor="middle">'+d.getDate()+'/'+(d.getMonth()+1)+'</text>'}
+    s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="16" fill="transparent" data-x="tip" data-v="'+esc(dshort(a.date)+': '+fpace(vals[i])+' /km · '+nf(a.log.km)+' km'+(a.log.eff?' · '+EFF[a.log.eff]:''))+'"/>';
+  });
+  return s+'</svg>';
+}
+
+function vStats(){
+  const td=today(),cw=cur(),pw=add(cw,-7);
+  const W=agg(cw,add(cw,6)),PW=agg(pw,add(pw,6));
+  const t=pd(td),m0=ds(new Date(t.getFullYear(),t.getMonth(),1)),m1=ds(new Date(t.getFullYear(),t.getMonth()+1,0));
+  const pm0=ds(new Date(t.getFullYear(),t.getMonth()-1,1)),pm1=ds(new Date(t.getFullYear(),t.getMonth(),0));
+  const M=agg(m0,m1),PM=agg(pm0,pm1);
+  const walks=loggedWalks();
+  const diff=(a,b,u,d=1)=>{const x=a-b;if(!b&&!a)return '';if(Math.abs(x)<.05)return '<div class="d">igual que la anterior</div>';return '<div class="d'+(x>0?' up':'')+'">'+(x>0?'+':'−')+nf(Math.abs(x),d)+' '+u+' vs anterior</div>'};
+  let h='<section><h2 style="font-size:24px;margin:0 2px 12px">Tu progreso</h2>';
+  h+='<div class="tiles">';
+  h+='<div class="tile"><div class="k">Km esta semana</div><div class="v">'+nf(W.km)+'</div>'+diff(W.km,PW.km,'km',2)+'</div>';
+  h+='<div class="tile"><div class="k">Km este mes</div><div class="v">'+nf(M.km)+'</div>'+diff(M.km,PM.km,'km',2)+'</div>';
+  h+='<div class="tile"><div class="k">Minutos semana</div><div class="v">'+Math.round(W.min)+'</div>'+diff(W.min,PW.min,'min',0)+'</div>';
+  h+='<div class="tile"><div class="k">Sesiones semana</div><div class="v">'+W.n+'<small>· mes '+M.n+'</small></div><div class="d">'+agg('2000-01-01','2999-12-31').n+' en total</div></div>';
+  const best=walks.length?walks.reduce((b,a)=>a.log.km>b.log.km?a:b):null;
+  const longest=walks.filter(a=>a.log.sec).reduce((b,a)=>!b||a.log.sec>b.log.sec?a:b,null);
+  const pace=W.pace||M.pace;
+  h+='<div class="tile"><div class="k">Distancia máxima</div><div class="v">'+(best?nf(best.log.km):'–')+'<small>km</small></div><div class="d">'+(best?dshort(best.date):'Aún sin datos')+'</div></div>';
+  h+='<div class="tile"><div class="k">Ritmo medio</div><div class="v">'+(pace?fpace(pace):'–')+'<small>/km</small></div><div class="d">'+(W.pace?'esta semana':M.pace?'este mes':'Registra distancia y tiempo')+'</div></div>';
+  h+='</div></section>';
+
+  // Evolución
+  let items=[];
+  const met=ui.metric;
+  const val=a=>met==='km'?a.km:met==='min'?a.min:a.n;
+  const unit=met==='km'?'km':met==='min'?'min':'sesiones';
+  const fv=v=>met==='km'?nf(v,1):String(Math.round(v));
+  if(ui.per==='w'){
+    const s0=monday(START);let from=add(cw,-7*7);if(from<s0)from=s0;
+    let n=Math.max(6,Math.round((pd(cw)-pd(from))/(7*864e5))+1);if(n>8)n=8;
+    for(let i=0;i<n;i++){const ws=add(from,7*i);const a=agg(ws,add(ws,6));const d=pd(ws);items.push({v:val(a),lab:d.getDate()+'/'+(d.getMonth()+1),cur:ws===cw,tip:'Semana '+weekLabel(ws)+': '+fv(val(a))+' '+unit})}
+  }else{
+    const s=pd(START);let y=s.getFullYear(),m=s.getMonth();
+    const cy=t.getFullYear(),cm=t.getMonth();
+    let startIdx=Math.max(y*12+m,cy*12+cm-5);let n=Math.max(4,cy*12+cm-startIdx+1);
+    for(let i=0;i<n;i++){const k=startIdx+i,yy=Math.floor(k/12),mm=k%12;const a=agg(ds(new Date(yy,mm,1)),ds(new Date(yy,mm+1,0)));items.push({v:val(a),lab:MON[mm],cur:yy===cy&&mm===cm,tip:MONL[mm]+' '+yy+': '+fv(val(a))+' '+unit})}
+  }
+  h+='<section class="sec"><h2>Evolución</h2><div class="card"><div class="ctrls">';
+  h+='<div class="seg">'+[['km','Km'],['min','Minutos'],['n','Sesiones']].map(([k,l])=>'<button data-x="metric" data-v="'+k+'" class="'+(met===k?'on':'')+'">'+l+'</button>').join('')+'</div>';
+  h+='<div class="seg">'+[['w','Por semana'],['m','Por mes']].map(([k,l])=>'<button data-x="per" data-v="'+k+'" class="'+(ui.per===k?'on':'')+'">'+l+'</button>').join('')+'</div></div>';
+  h+=barSVG(items,fv,v=>met==='km'?nf(v,1):String(Math.round(v)));
+  h+='<div class="tip" id="tip1">Toca una barra para ver el detalle. En rosa, el periodo actual.</div></div></section>';
+
+  // Ritmo
+  const pw2=walks.filter(a=>a.log.sec>0).slice(-14);
+  h+='<section class="sec"><h2>Ritmo medio</h2><div class="card"><p class="sub">Minutos por kilómetro en cada caminata. Cuanto más arriba, más rápido.</p>';
+  h+=pw2.length?paceSVG(pw2)+'<div class="tip" id="tip2">Toca un punto para ver la caminata.</div>':'<p class="empty">Registra distancia y tiempo para ver tu ritmo.</p>';
+  h+='</div></section>';
+
+  // Distancia y esfuerzo
+  const ew=walks.slice(-12);
+  h+='<section class="sec"><h2>Distancia y esfuerzo</h2><div class="card"><p class="sub">Cada barra es una caminata; el color indica cómo la sentiste.</p>';
+  if(ew.length){
+    h+=barSVG(ew.map(a=>{const d=pd(a.date);return{v:a.log.km,eff:a.log.eff||0,lab:d.getDate()+'/'+(d.getMonth()+1),tip:dshort(a.date)+': '+nf(a.log.km)+' km · '+(a.log.eff?EFF[a.log.eff]:'esfuerzo sin anotar')}}),v=>nf(v,1),v=>nf(v,1),it=>'var(--e'+it.eff+')');
+    h+='<div class="tip" id="tip3">Toca una barra para ver la caminata.</div>';
+    h+='<div class="legend">'+[1,2,3,4,5,0].map(e=>'<span><i style="background:var(--e'+e+')"></i>'+EFF[e]+'</span>').join('')+'</div>';
+  }else h+='<p class="empty">Aún no hay caminatas registradas.</p>';
+  // comparativa
+  if(walks.length>=2){
+    const k=Math.min(3,Math.floor(walks.length/2)),A=walks.slice(0,k),B=walks.slice(-k);
+    const st=xs=>{const p=xs.filter(a=>a.log.sec),e=xs.map(a=>a.log.eff).filter(Boolean);return{km:mean(xs.map(a=>a.log.km)),pace:p.length?sum(p.map(a=>a.log.sec))/sum(p.map(a=>a.log.km)):null,eff:mean(e)}};
+    const a=st(A),b=st(B);
+    const row=(l,x,y,f,better)=>{const ok=x!=null&&y!=null&&better(x,y);return '<div class="cmprow"><span>'+l+'</span><span class="r">'+(x!=null?f(x):'–')+'</span><span class="r">→</span><span class="r'+(ok?' good':'')+'">'+(y!=null?f(y):'–')+'</span></div>'};
+    h+='<div class="cmp"><div class="cmprow"><span class="h">Primeras '+k+' vs últimas '+k+'</span><span class="h r">Antes</span><span></span><span class="h r">Ahora</span></div>';
+    h+=row('Distancia media',a.km,b.km,v=>nf(v,1)+' km',(x,y)=>y>x+.05);
+    h+=row('Ritmo medio',a.pace,b.pace,v=>fpace(v),(x,y)=>y<x-3);
+    h+=row('Esfuerzo medio',a.eff,b.eff,v=>EFF[Math.round(v)],(x,y)=>y<x-.2);
+    h+='</div>';
+    const more=b.km>a.km+.05,easier=a.eff!=null&&b.eff!=null&&b.eff<=a.eff,faster=a.pace&&b.pace&&b.pace<a.pace-3;
+    let v='Sigue registrando el esfuerzo: así veremos si cada vez te cuesta menos.';
+    if(more&&easier)v='Caminas más distancia con el mismo esfuerzo o menos. Tu resistencia está mejorando.';
+    else if(more)v='Ya caminas más distancia que al principio.';
+    else if(faster)v='Vas más rápido que al principio con distancias parecidas.';
+    else if(easier&&a.eff!=null)v='Las mismas distancias te cuestan menos. Buena señal.';
+    h+='<p class="msg sage verdict">'+v+'</p>';
+  }
+  h+='</div></section>';
+
+  // Calendario
+  if(!ui.calM)ui.calM=td.slice(0,7);
+  const [cy,cm]=ui.calM.split('-').map(Number);
+  const f0=new Date(cy,cm-1,1),nd=new Date(cy,cm,0).getDate(),off=(f0.getDay()+6)%7;
+  h+='<section class="sec"><h2>Calendario</h2><div class="card"><div class="calhead"><button class="circ" data-x="cal" data-v="-1" aria-label="Mes anterior">'+ic('left')+'</button><b>'+MONL[cm-1]+' '+cy+'</b><button class="circ" data-x="cal" data-v="1" aria-label="Mes siguiente">'+ic('right')+'</button></div><div class="cal">';
+  h+=DSH.map(d=>'<span class="wd">'+d+'</span>').join('');
+  for(let i=0;i<off;i++)h+='<button class="out" tabindex="-1" aria-hidden="true"></button>';
+  for(let d=1;d<=nd;d++){
+    const s=cy+'-'+pad(cm)+'-'+pad(d);const xs=S.acts.filter(a=>a.date===s&&isDone(a));
+    h+='<button data-x="calday" data-v="'+s+'" class="'+(xs.length?'has':'')+(s===td?' td':'')+'" aria-label="'+d+' '+MON[cm-1]+(xs.length?', '+xs.length+' actividad(es)':'')+'"><span>'+d+'</span><span class="dots">'+xs.slice(0,3).map(a=>'<i style="background:var(--'+(T[a.type].tone==='sage'?'sage-ink':'rose-ink')+')"></i>').join('')+'</span></button>';
+  }
+  h+='</div><div class="legend"><span><i style="background:var(--sage-ink);border-radius:50%"></i>Caminata</span><span><i style="background:var(--rose-ink);border-radius:50%"></i>Yoga, pilates o barre</span></div></div></section>';
+
+  // Historial
+  h+='<section class="sec"><h2>Historial de semanas</h2><div class="card hist">';
+  for(let ws=cw;ws>=monday(START);ws=add(ws,-7)){
+    const w=weekPlan(ws);const pct=w.plan.length?w.done/w.plan.length:0;
+    h+='<button class="hrow" data-x="hist" data-v="'+ws+'"><span><b>'+weekLabel(ws)+'</b><br><span class="sub num">'+w.done+' de '+w.plan.length+' · '+nf(w.km)+' km · '+Math.round(w.min)+' min</span></span>'+ic('right')+'<span class="mini"><i style="width:'+Math.round(pct*100)+'%"></i></span></button>';
+  }
+  h+='</div></section>';
+  return h;
+}
+
+/* ---------- objetivos ---------- */
+const GK={
+  comfort_km:{label:'Distancia cómoda (km)',unit:'km',desc:t=>'Caminar '+nf(t)+' km con esfuerzo moderado o menor'},
+  long_min:{label:'Caminata continua (minutos)',unit:'min',desc:t=>'Caminar '+t+' minutos seguidos'},
+  week_sessions:{label:'Sesiones por semana',unit:'sesiones',desc:t=>t+' sesiones cada semana. Los descansos no cuentan en contra.'},
+  week_minutes:{label:'Minutos por semana',unit:'min',desc:t=>t+' minutos de actividad a la semana'},
+  total_km:{label:'Kilómetros acumulados',unit:'km',desc:t=>'Sumar '+nf(t)+' km caminando'}
+};
+function goalProg(g){
+  const cw=cur(),W=agg(cw,add(cw,6));let val=0,extra='',msg='';
+  if(g.kind==='comfort_km'){
+    val=bestKm(3);const b=bestKm(null);
+    extra=b>val?'Mejor distancia total: '+nf(b)+' km. Anota el esfuerzo al registrar para que cuente como cómoda.':'';
+  }else if(g.kind==='long_min'){
+    const w=loggedWalks().filter(a=>a.log.sec);val=w.length?Math.max(...w.map(a=>a.log.sec))/60:0;
+  }else if(g.kind==='week_sessions'){
+    val=W.n;let st=0;
+    for(let ws=add(cw,-7);ws>=monday(START);ws=add(ws,-7)){if(agg(ws,add(ws,6)).n>=g.target)st++;else break}
+    if(W.n>=g.target)st++;
+    extra=st?'Racha: '+st+(st===1?' semana cumplida':' semanas cumplidas seguidas'):'';
+  }else if(g.kind==='week_minutes'){
+    val=W.min;const past=[];for(let i=1;i<=4;i++){const ws=add(cw,-7*i);if(ws<monday(START))break;past.push(agg(ws,add(ws,6)).min)}
+    if(past.length)extra='Media de las últimas semanas: '+Math.round(mean(past))+' min';
+  }else if(g.kind==='total_km'){val=agg('2000-01-01','2999-12-31').km}
+  const pct=g.target?Math.min(1,val/g.target):0;
+  const weekly=g.kind==='week_sessions'||g.kind==='week_minutes';
+  if(pct>=1)msg=weekly?'Objetivo de esta semana cumplido. Lo que venga es extra.':'¡Conseguido! Puedes subir el listón cuando quieras.';
+  else if(pct>=.75)msg='Muy cerca. Un empujón más.';
+  else if(pct>=.4)msg=weekly?'Buen ritmo. Quedan días por delante.':'Vas por buen camino.';
+  else msg=weekly?'La semana acaba de empezar. Sin prisa.':'Todo empieza con la primera caminata. Sigue sumando.';
+  return {val,pct,extra,msg};
+}
+function vGoals(){
+  let h='<section><h2 style="font-size:24px;margin:0 2px 6px">Tus objetivos</h2><p class="sub" style="margin:0 2px 12px">Toca el lápiz para cambiar el nombre o la meta.</p>';
+  S.goals.forEach((g,i)=>{
+    const k=GK[g.kind]||GK.total_km,p=goalProg(g);
+    const v=k.unit==='km'?nf(p.val,2):Math.round(p.val);
+    h+='<div class="card goal'+(i%2?' rose':'')+'"><div class="gt"><div><h3>'+esc(g.title)+'</h3><div class="sub">'+esc(k.desc(g.target))+'</div></div><button class="editbtn" data-x="gedit" data-v="'+g.id+'" aria-label="Editar objetivo">'+ic('pen')+'</button></div>';
+    h+='<div class="bar" role="progressbar" aria-valuenow="'+Math.round(p.pct*100)+'" aria-valuemin="0" aria-valuemax="100"><i style="width:'+Math.max(2,Math.round(p.pct*100))+'%"></i></div>';
+    h+='<div class="gnums num"><span><b>'+v+'</b> de '+(k.unit==='km'?nf(g.target):g.target)+' '+k.unit+'</span><span>'+Math.round(p.pct*100)+'%</span></div>';
+    if(p.extra)h+='<div class="sub">'+esc(p.extra)+'</div>';
+    h+='<div class="gmsg">'+esc(p.msg)+'</div></div>';
+  });
+  h+='<div class="btns" style="margin-top:14px"><button class="btn sec" data-x="gadd">'+ic('plus')+'Añadir objetivo</button></div></section>';
+  return h;
+}
+
+/* ---------- datos ---------- */
+function vData(){
+  const n=S.acts.filter(isDone).length;
+  let h='<section><h2 style="font-size:24px;margin:0 2px 12px">Tus datos</h2><div class="card">';
+  h+='<h3>'+(storageOK?'Guardados en este iPhone':'Este navegador no está guardando')+'</h3>';
+  h+='<p class="sub">'+(storageOK?'Todo se guarda al momento, sin cuentas ni servidores. ':'Exporta una copia para no perder lo registrado. ')+n+(n===1?' actividad completada · ':' actividades completadas · ')+S.acts.length+' en el planning.</p>';
+  h+='<p class="sub">Última copia: <b>'+(S.meta&&S.meta.lastExport?dshort(S.meta.lastExport)+' '+S.meta.lastExport.slice(0,4):'nunca')+'</b></p>';
+  h+='<div class="btns" style="margin-top:12px"><button class="btn pri" data-x="export">'+ic('data')+'Exportar copia (JSON)</button><button class="btn sec" data-x="import">Importar copia desde archivo</button><button class="btn sec" data-x="paste">Pegar copia como texto</button></div>';
+  if(ui.dump)h+='<p class="note">Si no se abrió la ventana para guardar, copia este texto y guárdalo en Notas o Archivos:</p><textarea class="dump" id="dump" readonly>'+esc(ui.dump)+'</textarea><div class="btns"><button class="btn soft" data-x="copy">Copiar texto</button></div>';
+  if(ui.pasting)h+='<textarea class="dump" id="pastebox" placeholder="Pega aquí el contenido de tu copia .json"></textarea><div class="btns"><button class="btn soft" data-x="parsepaste">Revisar copia</button></div>';
+  if(ui.pending)h+='<div class="msg" style="margin-top:12px">La copia tiene '+ui.pending.acts.length+' actividades. Restaurarla sustituirá los datos actuales.</div><div class="btns"><button class="btn pri" data-x="restore">Restaurar copia</button><button class="btn sec" data-x="cancelrestore">Cancelar</button></div>';
+  h+='</div>';
+  h+='<div class="card"><h3>Instalar en tu iPhone</h3><ol class="steps"><li>Abre la dirección de la app en Safari.</li><li>Toca Compartir y elige “Añadir a pantalla de inicio”.</li><li>Ábrela siempre desde ese icono: funciona sin conexión y tus datos se quedan en el móvil.</li></ol><p class="note">Exporta una copia cada semana o dos y guárdala en Archivos o iCloud Drive. Si borras la app de la pantalla de inicio, sus datos se borran con ella.</p></div>';
+  h+='<div class="card"><h3>Cómo se adapta tu plan</h3><p class="sub">Cada semana nueva alarga poco a poco la caminata larga (unos 5 minutos cada una o dos semanas) y, más despacio, la moderada. Si la semana anterior anotaste esfuerzo difícil, el plan se mantiene; si fue muy difícil, baja un poco. Una de cada cuatro semanas es más ligera para asimilar. Siempre puedes mover o cambiar cualquier actividad.</p></div>';
+  h+='<div class="card"><h3>Empezar de cero</h3><p class="sub">Borra todo y vuelve al planning inicial. Exporta antes una copia.</p><div class="btns"><button class="btn dan'+(ui.confirm==='reset'?' armed':'')+'" data-x="reset">'+(ui.confirm==='reset'?'Toca otra vez para borrar todo':'Borrar todos los datos')+'</button></div></div>';
+  return h+'</section>';
+}
+async function doExport(){
+  const json=JSON.stringify(S,null,1),name='paso-a-paso-'+today()+'.json';
+  let shared=false;
+  try{
+    const f=new File([json],name,{type:'application/json'});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Copia de Paso a Paso'});shared=true}
+  }catch(e){if(e&&e.name==='AbortError')return}
+  S.meta=S.meta||{};S.meta.lastExport=today();save();
+  if(shared){toast('Copia exportada');render();return}
+  try{const u=URL.createObjectURL(new Blob([json],{type:'application/json'}));const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}catch(e){}
+  ui.dump=json;render();
+}
+function checkBackup(o){
+  if(!o||!Array.isArray(o.acts)||typeof o.weeks!=='object'){toast('Ese archivo no es una copia de Paso a Paso');return}
+  o.goals=o.goals||[];o.meta=o.meta||{};ui.pending=o;ui.pasting=false;render();
+}
+
+/* ---------- hojas ---------- */
+let es=null;
+function openSheet(html){$('#sheetBody').innerHTML=html;$('#sheet').hidden=false;document.body.style.overflow='hidden'}
+function closeSheet(){$('#sheet').hidden=true;document.body.style.overflow='';es=null}
+function openEdit(id,date){
+  const a=id?S.acts.find(x=>x.id===id):null;
+  es={id,type:a?a.type:'walk_mod'};
+  const v=a||{date,dMin:30,dMax:35,km:null};
+  let h='<h2>'+(a?'Editar actividad':'Nueva actividad')+'</h2><p class="sub">'+(a?dshort(a.date):dshort(date))+'</p><div class="form">';
+  h+='<div class="types">'+Object.keys(T).map(k=>'<button type="button" data-x="etype" data-v="'+k+'" class="'+(k===es.type?'on':'')+'">'+ic(T[k].ic)+T[k].n+'</button>').join('')+'</div>';
+  h+='<label>Fecha<input type="date" id="f-date" value="'+v.date+'"></label>';
+  h+='<div class="row2 dur"><label>Duración mín. (min)<input id="f-min" inputmode="numeric" value="'+(v.dMin??'')+'"></label><label>Duración máx. (min)<input id="f-max" inputmode="numeric" value="'+(v.dMax??'')+'"></label></div>';
+  h+='<label class="walkonly">Distancia objetivo (km)<input id="f-km" inputmode="decimal" placeholder="Se calcula con tu ritmo" value="'+(v.km!=null?String(v.km).replace('.',','):'')+'"></label>';
+  h+='<div class="btns"><button class="btn pri" data-x="esave">Guardar</button>';
+  if(a&&!T[a.type].rest)h+='<button class="btn soft" data-x="log" data-v="'+a.id+'">'+(a.done?'Ver o editar registro':'Registrar entrenamiento')+'</button>';
+  if(a)h+='<button class="btn dan" data-x="edel">Eliminar actividad</button>';
+  h+='</div></div>';
+  openSheet(h);syncType();
+}
+function syncType(){
+  const t=T[es.type];
+  document.querySelectorAll('.walkonly').forEach(e=>e.hidden=!t.walk);
+  const d=document.querySelector('.dur');if(d)d.hidden=!!t.rest;
+}
+function saveEdit(){
+  const t=T[es.type];const date=$('#f-date').value;if(!date){toast('Elige una fecha');return}
+  let mn=num($('#f-min').value),mx=num($('#f-max').value);
+  if(mn!=null&&mx!=null&&mx<mn)[mn,mx]=[mx,mn];if(mx==null)mx=mn;if(mn==null)mn=mx;
+  let km=num($('#f-km').value);
+  if(t.rest){mn=mx=null;km=null}else if(!t.walk)km=null;else if(km==null)km=targetKm(es.type,mx);
+  if(es.id){const a=S.acts.find(x=>x.id===es.id);Object.assign(a,{type:es.type,date,dMin:mn,dMax:mx,km});if(t.rest){a.done=false;a.log=null}}
+  else S.acts.push({id:uid(),date,type:es.type,dMin:mn,dMax:mx,km,done:false,log:null});
+  if(monday(date)!==ui.ws&&date>=START){ui.ws=monday(date);ensureWeek(ui.ws)}
+  save();closeSheet();render();toast('Guardado');
+}
+function openLog(id){
+  const a=S.acts.find(x=>x.id===id);if(!a)return;const t=T[a.type],l=a.log||{};
+  es={id,eff:l.eff||0,logging:true};
+  const sec=l.sec||0,hh=Math.floor(sec/3600),mm=Math.floor(sec%3600/60),ss=sec%60;
+  let h='<h2>'+t.n+'</h2><p class="sub">'+DAYS[dow(a.date)]+' '+dshort(a.date)+' · '+planMeta(a)+'</p><div class="form">';
+  if(t.walk)h+='<label>Distancia (km)<input id="l-km" inputmode="decimal" placeholder="Ej. 4,66" value="'+(l.km?String(l.km).replace('.',','):'')+'"></label>';
+  h+='<div><div style="font-size:14px;font-weight:600;color:var(--muted);margin-bottom:6px">Tiempo total</div><div class="row3"><label>Horas<input id="l-h" inputmode="numeric" placeholder="0" value="'+(sec&&hh?hh:'')+'"></label><label>Minutos<input id="l-m" inputmode="numeric" placeholder="0" value="'+(sec?mm:'')+'"></label><label>Segundos<input id="l-s" inputmode="numeric" placeholder="0" value="'+(sec?ss:'')+'"></label></div></div>';
+  if(t.walk)h+='<div class="pacebox"><span>Ritmo medio</span><b id="l-pace">–</b></div>';
+  h+='<div class="row2"><label>FC media (ppm)<input id="l-hr" inputmode="numeric" placeholder="Opcional" value="'+(l.hr??'')+'"></label><label>Calorías activas<input id="l-kcal" inputmode="numeric" placeholder="Opcional" value="'+(l.kcal??'')+'"></label></div>';
+  h+='<div><div style="font-size:14px;font-weight:600;color:var(--muted);margin-bottom:6px">¿Cómo te resultó?</div><div class="effs">'+[1,2,3,4,5].map(e=>'<button type="button" data-x="eff" data-v="'+e+'" class="'+(es.eff===e?'on':'')+'"><i style="background:var(--e'+e+')"></i>'+EFF[e]+'</button>').join('')+'</div></div>';
+  h+='<label>Notas<textarea id="l-notes" placeholder="Cómo te encontraste, el recorrido, el tiempo…">'+esc(l.notes||'')+'</textarea></label>';
+  h+='<div class="btns"><button class="btn pri" data-x="lsave">'+ic('check')+(a.done?'Guardar cambios':'Completar y guardar')+'</button>';
+  if(a.done)h+='<button class="btn dan" data-x="lundo">Marcar como no hecha</button>';
+  h+='</div><p class="note">Ningún campo es obligatorio.</p></div>';
+  openSheet(h);updPace();
+}
+function readSec(){const h=num($('#l-h').value)||0,m=num($('#l-m').value)||0,s=num($('#l-s').value)||0;return Math.round(h*3600+m*60+s)}
+function updPace(){const p=$('#l-pace'),k=$('#l-km');if(!p||!k)return;const km=num(k.value),sec=readSec();p.textContent=km&&sec?fpace(sec/km)+' /km':'–'}
+function saveLog(){
+  const a=S.acts.find(x=>x.id===es.id);if(!a)return;
+  const k=$('#l-km'),sec=readSec();
+  a.log={km:k?num(k.value):null,sec:sec||null,hr:num($('#l-hr').value),kcal:num($('#l-kcal').value),eff:es.eff||null,notes:$('#l-notes').value.trim()};
+  const wasDone=a.done;a.done=true;save();closeSheet();render();
+  toast(wasDone?'Registro actualizado':cheer(a));
+}
+function cheer(a){const t=T[a.type];const l=a.log||{};if(t.walk&&l.km)return '¡Hecho! '+nf(l.km)+' km más en tus piernas';return '¡'+t.n+' completado!'}
+function openGoal(id){
+  const g=id?S.goals.find(x=>x.id===id):{kind:'comfort_km',title:'',target:5};
+  es={gid:id};
+  let h='<h2>'+(id?'Editar objetivo':'Nuevo objetivo')+'</h2><div class="form">';
+  h+='<label>Nombre<input id="g-title" value="'+esc(g.title)+'" placeholder="Ej. Caminar 6 km"></label>';
+  h+='<label>Tipo de medida<select id="g-kind">'+Object.keys(GK).map(k=>'<option value="'+k+'"'+(k===g.kind?' selected':'')+'>'+GK[k].label+'</option>').join('')+'</select></label>';
+  h+='<label>Meta<input id="g-target" inputmode="decimal" value="'+String(g.target).replace('.',',')+'"></label>';
+  h+='<div class="btns"><button class="btn pri" data-x="gsave">Guardar</button>'+(id?'<button class="btn dan" data-x="gdel">Eliminar objetivo</button>':'')+'</div></div>';
+  openSheet(h);
+}
+function saveGoal(){
+  const kind=$('#g-kind').value,target=num($('#g-target').value);if(!target){toast('Escribe una meta mayor que cero');return}
+  const title=$('#g-title').value.trim()||GK[kind].desc(target);
+  if(es.gid)Object.assign(S.goals.find(x=>x.id===es.gid),{kind,target,title});else S.goals.push({id:uid(),kind,target,title});
+  save();closeSheet();render();toast('Objetivo guardado');
+}
+
+/* ---------- avisos ---------- */
+let tt;function toast(m){const o=document.querySelector('.toast');if(o)o.remove();const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=m;document.body.appendChild(d);clearTimeout(tt);tt=setTimeout(()=>d.remove(),2200)}
+
+/* ---------- eventos ---------- */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-x]');if(!b)return;
+  const x=b.dataset.x,v=b.dataset.v;
+  const armed=(key)=>{if(ui.confirm===key){ui.confirm=null;return true}ui.confirm=key;return false};
+  switch(x){
+    case 'tab':ui.view=v;ui.dump=null;ui.pending=null;ui.pasting=false;ui.confirm=null;render();scrollTo(0,0);break;
+    case 'wk':ui.ws=add(ui.ws,7*Number(v));if(ui.ws<monday(START))ui.ws=monday(START);render();break;
+    case 'gotoday':ui.ws=cur();render();break;
+    case 'add':openEdit(null,v);break;
+    case 'edit':openEdit(v);break;
+    case 'log':openLog(v);break;
+    case 'check':{const a=S.acts.find(y=>y.id===v);if(!a)break;
+      if(a.done){openLog(v);break}
+      if(T[a.type].walk){openLog(v);break}
+      a.done=true;save();render();toast(cheer(a)+' · toca para añadir notas');break}
+    case 'close':closeSheet();break;
+    case 'etype':es.type=v;document.querySelectorAll('.types button').forEach(y=>y.classList.toggle('on',y.dataset.v===v));syncType();break;
+    case 'esave':saveEdit();break;
+    case 'edel':if(b.classList.contains('armed')){S.acts=S.acts.filter(y=>y.id!==es.id);save();closeSheet();render();toast('Actividad eliminada')}else{b.classList.add('armed');b.textContent='Toca otra vez para eliminar'}break;
+    case 'eff':es.eff=es.eff===Number(v)?0:Number(v);document.querySelectorAll('.effs button').forEach(y=>y.classList.toggle('on',Number(y.dataset.v)===es.eff));break;
+    case 'lsave':saveLog();break;
+    case 'lundo':{const a=S.acts.find(y=>y.id===es.id);if(a){a.done=false}save();closeSheet();render();toast('Marcada como pendiente');break}
+    case 'metric':ui.metric=v;render();break;
+    case 'per':ui.per=v;render();break;
+    case 'tip':{const c=b.closest('.card');const t=c&&c.querySelector('.tip');if(t)t.textContent=v;break}
+    case 'cal':{const [y,m]=ui.calM.split('-').map(Number);const d=new Date(y,m-1+Number(v),1);ui.calM=d.getFullYear()+'-'+pad(d.getMonth()+1);render();break}
+    case 'calday':case 'hist':ui.ws=monday(v)<monday(START)?monday(START):monday(v);ui.view='week';render();scrollTo(0,0);break;
+    case 'gedit':openGoal(v);break;
+    case 'gadd':openGoal(null);break;
+    case 'gsave':saveGoal();break;
+    case 'gdel':if(b.classList.contains('armed')){S.goals=S.goals.filter(y=>y.id!==es.gid);save();closeSheet();render();toast('Objetivo eliminado')}else{b.classList.add('armed');b.textContent='Toca otra vez para eliminar'}break;
+    case 'export':doExport();break;
+    case 'import':$('#fileIn').click();break;
+    case 'paste':ui.pasting=!ui.pasting;ui.pending=null;render();break;
+    case 'parsepaste':try{checkBackup(JSON.parse($('#pastebox').value))}catch(err){toast('No se pudo leer el texto pegado')}break;
+    case 'restore':S=ui.pending;ui.pending=null;save();ui.ws=cur();ensureWeek(ui.ws);render();toast('Copia restaurada');break;
+    case 'cancelrestore':ui.pending=null;render();break;
+    case 'copy':{const t=$('#dump');const done=()=>toast('Texto copiado');if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ui.dump).then(done,()=>{t.focus();t.select()})}else{t.focus();t.select()}break}
+    case 'reset':if(armed('reset')){try{localStorage.removeItem(KEY)}catch(err){}seed();save();ui.ws=cur();render();toast('Datos borrados')}else render();break;
+  }
+});
+document.addEventListener('input',e=>{if(e.target.closest('#sheet')&&es&&es.logging)updPace()});
+$('#fileIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{checkBackup(JSON.parse(r.result))}catch(err){toast('Ese archivo no se puede leer')}};r.readAsText(f);e.target.value=''});
+let lastDay=today();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&today()!==lastDay){lastDay=today();ui.ws=cur();ensureWeek(ui.ws);render()}});
+
+/* ---------- inicio ---------- */
+S=load();
+ui.ws=cur();ensureWeek(ui.ws);save();
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+render();
+window.__pap={get S(){return S},ensureWeek,genWeek,goalProg,agg,fpace};
+})();
+</script>
+<script>
+if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+</script>
+</body>
+</html>
