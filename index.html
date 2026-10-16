@@ -201,6 +201,7 @@ textarea.dump{width:100%;min-height:120px;font-family:ui-monospace,Menlo,monospa
 .types{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 .types button{display:flex;align-items:center;gap:8px;min-height:50px;border-radius:14px;background:var(--sunk);padding:0 12px;font-weight:600;font-size:15px;text-align:left;border:1.5px solid transparent}
 .types button svg{width:22px;height:22px;flex:none}
+.types button:last-child:nth-child(odd){grid-column:1/-1}
 .types button.on{border-color:var(--ink);background:var(--surface)}
 .effs{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .effs button{min-height:56px;border-radius:12px;background:var(--sunk);font-size:12px;font-weight:600;line-height:1.15;padding:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1.5px solid transparent}
@@ -277,6 +278,8 @@ const P={
   ring:'<circle cx="12" cy="12" r="7"/><rect x="2.2" y="9.8" width="3" height="4.4" rx="1.2"/><rect x="18.8" y="9.8" width="3" height="4.4" rx="1.2"/>',
   barre:'<path d="M3 7.5h18"/><path d="M5.5 7.5V21M18.5 7.5V21"/><path d="M10 11.5c.8 2.6 1.6 4.6 3.6 6.5"/><path d="M13.6 18l1.9.4"/>',
   moon:'<path d="M20 14.6A8 8 0 1 1 9.4 4a6.4 6.4 0 0 0 10.6 10.6z"/>',
+  dumbbell:'<path d="M6.5 7.5v9M17.5 7.5v9M3.5 10v4M20.5 10v4M6.5 12h11"/>',
+  spark:'<path d="M12 3.5l2.1 5.4 5.4 2.1-5.4 2.1L12 18.5l-2.1-5.4L4.5 11l5.4-2.1z"/>',
   check:'<path d="M5 12.5l4.3 4.3L19 7.2"/>',
   plus:'<path d="M12 5v14M5 12h14"/>',
   left:'<path d="M14.5 6l-6 6 6 6"/>',
@@ -296,8 +299,11 @@ const T={
   yoga:{n:'Yoga',ic:'yoga',tone:'rose'},
   pilates:{n:'Pilates',ic:'ring',tone:'rose'},
   barre:{n:'Barre',ic:'barre',tone:'rose'},
+  personal:{n:'Entrenador personal',ic:'dumbbell',tone:'rose'},
+  other:{n:'Otra actividad',ic:'spark',tone:'rose',custom:1},
   rest:{n:'Descanso',ic:'moon',rest:1,tone:'cream'}
 };
+const nm=a=>(a.name&&T[a.type]&&T[a.type].custom?a.name:(T[a.type]||T.walk_mod).n);
 const EFF=['Sin dato','Muy fácil','Fácil','Moderado','Difícil','Muy difícil'];
 
 /* ---------- datos ---------- */
@@ -488,8 +494,8 @@ function actRow(a){
   const t=T[a.type]||T.walk_mod;
   if(t.rest)return '<div class="act rest tone-cream"><button class="ico" data-x="edit" data-v="'+a.id+'" aria-label="Editar">'+ic(t.ic)+'</button><button class="abody" data-x="edit" data-v="'+a.id+'"><span class="aname">Descanso</span><span class="ameta">'+planMeta(a)+'</span></button></div>';
   const ll=logLine(a);
-  return '<div class="act tone-'+t.tone+(a.done?' done':'')+'"><button class="ico" data-x="edit" data-v="'+a.id+'" aria-label="Editar '+t.n+'">'+ic(t.ic)+'</button>'+
-    '<button class="abody" data-x="'+(a.done?'log':'edit')+'" data-v="'+a.id+'"><span class="aname">'+t.n+'</span><span class="ameta">'+planMeta(a)+'</span>'+(ll?'<span class="alog num">'+esc(ll)+'</span>':'')+'</button>'+
+  return '<div class="act tone-'+t.tone+(a.done?' done':'')+'"><button class="ico" data-x="edit" data-v="'+a.id+'" aria-label="Editar '+esc(nm(a))+'">'+ic(t.ic)+'</button>'+
+    '<button class="abody" data-x="'+(a.done?'log':'edit')+'" data-v="'+a.id+'"><span class="aname">'+esc(nm(a))+'</span><span class="ameta">'+planMeta(a)+'</span>'+(ll?'<span class="alog num">'+esc(ll)+'</span>':'')+'</button>'+
     '<button class="check" data-x="check" data-v="'+a.id+'" aria-pressed="'+(a.done?'true':'false')+'" aria-label="'+(a.done?'Completada':'Marcar como completada')+'">'+ic('check')+'</button></div>';
 }
 
@@ -625,7 +631,7 @@ function vStats(){
     const s=cy+'-'+pad(cm)+'-'+pad(d);const xs=S.acts.filter(a=>a.date===s&&isDone(a));
     h+='<button data-x="calday" data-v="'+s+'" class="'+(xs.length?'has':'')+(s===td?' td':'')+'" aria-label="'+d+' '+MON[cm-1]+(xs.length?', '+xs.length+' actividad(es)':'')+'"><span>'+d+'</span><span class="dots">'+xs.slice(0,3).map(a=>'<i style="background:var(--'+(T[a.type].tone==='sage'?'sage-ink':'rose-ink')+')"></i>').join('')+'</span></button>';
   }
-  h+='</div><div class="legend"><span><i style="background:var(--sage-ink);border-radius:50%"></i>Caminata</span><span><i style="background:var(--rose-ink);border-radius:50%"></i>Yoga, pilates o barre</span></div></div></section>';
+  h+='</div><div class="legend"><span><i style="background:var(--sage-ink);border-radius:50%"></i>Caminata</span><span><i style="background:var(--rose-ink);border-radius:50%"></i>Clases y otras actividades</span></div></div></section>';
 
   // Historial
   h+='<section class="sec"><h2>Historial de semanas</h2><div class="card hist">';
@@ -728,6 +734,7 @@ function openEdit(id,date){
   const v=a||{date,dMin:30,dMax:35,km:null};
   let h='<h2>'+(a?'Editar actividad':'Nueva actividad')+'</h2><p class="sub">'+(a?dshort(a.date):dshort(date))+'</p><div class="form">';
   h+='<div class="types">'+Object.keys(T).map(k=>'<button type="button" data-x="etype" data-v="'+k+'" class="'+(k===es.type?'on':'')+'">'+ic(T[k].ic)+T[k].n+'</button>').join('')+'</div>';
+  h+='<label class="customonly">Nombre de la actividad<input id="f-name" placeholder="Ej. Natación, bici, estiramientos" value="'+esc(a&&a.name||'')+'"></label>';
   h+='<label>Fecha<input type="date" id="f-date" value="'+v.date+'"></label>';
   h+='<div class="row2 dur"><label>Duración mín. (min)<input id="f-min" inputmode="numeric" value="'+(v.dMin??'')+'"></label><label>Duración máx. (min)<input id="f-max" inputmode="numeric" value="'+(v.dMax??'')+'"></label></div>';
   h+='<label class="walkonly">Distancia objetivo (km)<input id="f-km" inputmode="decimal" placeholder="Se calcula con tu ritmo" value="'+(v.km!=null?String(v.km).replace('.',','):'')+'"></label>';
@@ -740,6 +747,7 @@ function openEdit(id,date){
 function syncType(){
   const t=T[es.type];
   document.querySelectorAll('.walkonly').forEach(e=>e.hidden=!t.walk);
+  document.querySelectorAll('.customonly').forEach(e=>e.hidden=!t.custom);
   const d=document.querySelector('.dur');if(d)d.hidden=!!t.rest;
 }
 function saveEdit(){
@@ -748,8 +756,9 @@ function saveEdit(){
   if(mn!=null&&mx!=null&&mx<mn)[mn,mx]=[mx,mn];if(mx==null)mx=mn;if(mn==null)mn=mx;
   let km=num($('#f-km').value);
   if(t.rest){mn=mx=null;km=null}else if(!t.walk)km=null;else if(km==null)km=targetKm(es.type,mx);
-  if(es.id){const a=S.acts.find(x=>x.id===es.id);Object.assign(a,{type:es.type,date,dMin:mn,dMax:mx,km});if(t.rest){a.done=false;a.log=null}}
-  else S.acts.push({id:uid(),date,type:es.type,dMin:mn,dMax:mx,km,done:false,log:null});
+  const fn=$('#f-name'),name=t.custom&&fn?fn.value.trim()||null:null;
+  if(es.id){const a=S.acts.find(x=>x.id===es.id);Object.assign(a,{type:es.type,date,dMin:mn,dMax:mx,km,name});if(t.rest){a.done=false;a.log=null}}
+  else S.acts.push({id:uid(),date,type:es.type,dMin:mn,dMax:mx,km,name,done:false,log:null});
   if(monday(date)!==ui.ws&&date>=START){ui.ws=monday(date);ensureWeek(ui.ws)}
   save();closeSheet();render();toast('Guardado');
 }
@@ -757,7 +766,7 @@ function openLog(id){
   const a=S.acts.find(x=>x.id===id);if(!a)return;const t=T[a.type],l=a.log||{};
   es={id,eff:l.eff||0,logging:true};
   const sec=l.sec||0,hh=Math.floor(sec/3600),mm=Math.floor(sec%3600/60),ss=sec%60;
-  let h='<h2>'+t.n+'</h2><p class="sub">'+DAYS[dow(a.date)]+' '+dshort(a.date)+' · '+planMeta(a)+'</p><div class="form">';
+  let h='<h2>'+esc(nm(a))+'</h2><p class="sub">'+DAYS[dow(a.date)]+' '+dshort(a.date)+' · '+planMeta(a)+'</p><div class="form">';
   if(t.walk)h+='<label>Distancia (km)<input id="l-km" inputmode="decimal" placeholder="Ej. 4,66" value="'+(l.km?String(l.km).replace('.',','):'')+'"></label>';
   h+='<div><div style="font-size:14px;font-weight:600;color:var(--muted);margin-bottom:6px">Tiempo total</div><div class="row3"><label>Horas<input id="l-h" inputmode="numeric" placeholder="0" value="'+(sec&&hh?hh:'')+'"></label><label>Minutos<input id="l-m" inputmode="numeric" placeholder="0" value="'+(sec?mm:'')+'"></label><label>Segundos<input id="l-s" inputmode="numeric" placeholder="0" value="'+(sec?ss:'')+'"></label></div></div>';
   if(t.walk)h+='<div class="pacebox"><span>Ritmo medio</span><b id="l-pace">–</b></div>';
@@ -778,7 +787,7 @@ function saveLog(){
   const wasDone=a.done;a.done=true;save();closeSheet();render();
   toast(wasDone?'Registro actualizado':cheer(a));
 }
-function cheer(a){const t=T[a.type];const l=a.log||{};if(t.walk&&l.km)return '¡Hecho! '+nf(l.km)+' km más en tus piernas';return '¡'+t.n+' completado!'}
+function cheer(a){const t=T[a.type];const l=a.log||{};if(t.walk&&l.km)return '¡Hecho! '+nf(l.km)+' km más en tus piernas';return '¡'+nm(a)+': hecho!'}
 function openGoal(id){
   const g=id?S.goals.find(x=>x.id===id):{kind:'comfort_km',title:'',target:5};
   es={gid:id};
