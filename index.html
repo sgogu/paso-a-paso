@@ -278,6 +278,7 @@ const P={
   ring:'<circle cx="12" cy="12" r="7"/><rect x="2.2" y="9.8" width="3" height="4.4" rx="1.2"/><rect x="18.8" y="9.8" width="3" height="4.4" rx="1.2"/>',
   barre:'<path d="M3 7.5h18"/><path d="M5.5 7.5V21M18.5 7.5V21"/><path d="M10 11.5c.8 2.6 1.6 4.6 3.6 6.5"/><path d="M13.6 18l1.9.4"/>',
   moon:'<path d="M20 14.6A8 8 0 1 1 9.4 4a6.4 6.4 0 0 0 10.6 10.6z"/>',
+  run:'<circle cx="14.5" cy="4.5" r="1.9"/><path d="M10.5 21l2.2-5.2-2.7-2.6 1.3-4.6"/><path d="M6.5 10.2l3.4-1.6 4.3.5 2 3.3 3 .8"/><path d="M12.7 15.8l3.6 1.4.7 3.8"/><path d="M10 13.2l-2.2 3.3H4.5"/>',
   dumbbell:'<path d="M6.5 7.5v9M17.5 7.5v9M3.5 10v4M20.5 10v4M6.5 12h11"/>',
   spark:'<path d="M12 3.5l2.1 5.4 5.4 2.1-5.4 2.1L12 18.5l-2.1-5.4L4.5 11l5.4-2.1z"/>',
   check:'<path d="M5 12.5l4.3 4.3L19 7.2"/>',
@@ -293,9 +294,10 @@ const P={
 const ic=(n,c='i')=>'<svg class="'+c+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+P[n]+'</svg>';
 
 const T={
-  walk_soft:{n:'Caminata suave',ic:'leaf',walk:1,f:.9,tone:'sage'},
-  walk_mod:{n:'Caminata moderada',ic:'feet',walk:1,f:1,tone:'sage'},
-  walk_long:{n:'Caminata larga',ic:'route',walk:1,f:1,tone:'sage'},
+  walk_soft:{n:'Caminata suave',ic:'leaf',walk:1,dist:1,f:.9,tone:'sage'},
+  walk_mod:{n:'Caminata moderada',ic:'feet',walk:1,dist:1,f:1,tone:'sage'},
+  walk_long:{n:'Caminata larga',ic:'route',walk:1,dist:1,f:1,tone:'sage'},
+  run:{n:'Correr',ic:'run',dist:1,tone:'sage'},
   yoga:{n:'Yoga',ic:'yoga',tone:'rose'},
   pilates:{n:'Pilates',ic:'ring',tone:'rose'},
   barre:{n:'Barre',ic:'barre',tone:'rose'},
@@ -478,7 +480,7 @@ function planMeta(a){
   const t=T[a.type],p=[];
   if(t.rest)return 'Recuperar también es avanzar';
   if(a.dMin||a.dMax)p.push(a.dMin&&a.dMax&&a.dMin!==a.dMax?a.dMin+'–'+a.dMax+' min':(a.dMax||a.dMin)+' min');
-  if(t.walk&&a.km)p.push('objetivo '+nf(a.km,1)+' km');
+  if(t.dist&&a.km)p.push('objetivo '+nf(a.km,1)+' km');
   return p.join(' · ')||'Sin duración';
 }
 function logLine(a){
@@ -631,7 +633,7 @@ function vStats(){
     const s=cy+'-'+pad(cm)+'-'+pad(d);const xs=S.acts.filter(a=>a.date===s&&isDone(a));
     h+='<button data-x="calday" data-v="'+s+'" class="'+(xs.length?'has':'')+(s===td?' td':'')+'" aria-label="'+d+' '+MON[cm-1]+(xs.length?', '+xs.length+' actividad(es)':'')+'"><span>'+d+'</span><span class="dots">'+xs.slice(0,3).map(a=>'<i style="background:var(--'+(T[a.type].tone==='sage'?'sage-ink':'rose-ink')+')"></i>').join('')+'</span></button>';
   }
-  h+='</div><div class="legend"><span><i style="background:var(--sage-ink);border-radius:50%"></i>Caminata</span><span><i style="background:var(--rose-ink);border-radius:50%"></i>Clases y otras actividades</span></div></div></section>';
+  h+='</div><div class="legend"><span><i style="background:var(--sage-ink);border-radius:50%"></i>Caminata o carrera</span><span><i style="background:var(--rose-ink);border-radius:50%"></i>Clases y otras actividades</span></div></div></section>';
 
   // Historial
   h+='<section class="sec"><h2>Historial de semanas</h2><div class="card hist">';
@@ -746,7 +748,7 @@ function openEdit(id,date){
 }
 function syncType(){
   const t=T[es.type];
-  document.querySelectorAll('.walkonly').forEach(e=>e.hidden=!t.walk);
+  document.querySelectorAll('.walkonly').forEach(e=>e.hidden=!t.dist);
   document.querySelectorAll('.customonly').forEach(e=>e.hidden=!t.custom);
   const d=document.querySelector('.dur');if(d)d.hidden=!!t.rest;
 }
@@ -755,7 +757,7 @@ function saveEdit(){
   let mn=num($('#f-min').value),mx=num($('#f-max').value);
   if(mn!=null&&mx!=null&&mx<mn)[mn,mx]=[mx,mn];if(mx==null)mx=mn;if(mn==null)mn=mx;
   let km=num($('#f-km').value);
-  if(t.rest){mn=mx=null;km=null}else if(!t.walk)km=null;else if(km==null)km=targetKm(es.type,mx);
+  if(t.rest){mn=mx=null;km=null}else if(!t.dist)km=null;else if(km==null)km=targetKm(es.type,mx);
   const fn=$('#f-name'),name=t.custom&&fn?fn.value.trim()||null:null;
   if(es.id){const a=S.acts.find(x=>x.id===es.id);Object.assign(a,{type:es.type,date,dMin:mn,dMax:mx,km,name});if(t.rest){a.done=false;a.log=null}}
   else S.acts.push({id:uid(),date,type:es.type,dMin:mn,dMax:mx,km,name,done:false,log:null});
@@ -767,9 +769,9 @@ function openLog(id){
   es={id,eff:l.eff||0,logging:true};
   const sec=l.sec||0,hh=Math.floor(sec/3600),mm=Math.floor(sec%3600/60),ss=sec%60;
   let h='<h2>'+esc(nm(a))+'</h2><p class="sub">'+DAYS[dow(a.date)]+' '+dshort(a.date)+' · '+planMeta(a)+'</p><div class="form">';
-  if(t.walk)h+='<label>Distancia (km)<input id="l-km" inputmode="decimal" placeholder="Ej. 4,66" value="'+(l.km?String(l.km).replace('.',','):'')+'"></label>';
+  if(t.dist)h+='<label>Distancia (km)<input id="l-km" inputmode="decimal" placeholder="Ej. 4,66" value="'+(l.km?String(l.km).replace('.',','):'')+'"></label>';
   h+='<div><div style="font-size:14px;font-weight:600;color:var(--muted);margin-bottom:6px">Tiempo total</div><div class="row3"><label>Horas<input id="l-h" inputmode="numeric" placeholder="0" value="'+(sec&&hh?hh:'')+'"></label><label>Minutos<input id="l-m" inputmode="numeric" placeholder="0" value="'+(sec?mm:'')+'"></label><label>Segundos<input id="l-s" inputmode="numeric" placeholder="0" value="'+(sec?ss:'')+'"></label></div></div>';
-  if(t.walk)h+='<div class="pacebox"><span>Ritmo medio</span><b id="l-pace">–</b></div>';
+  if(t.dist)h+='<div class="pacebox"><span>Ritmo medio</span><b id="l-pace">–</b></div>';
   h+='<div class="row2"><label>FC media (ppm)<input id="l-hr" inputmode="numeric" placeholder="Opcional" value="'+(l.hr??'')+'"></label><label>Calorías activas<input id="l-kcal" inputmode="numeric" placeholder="Opcional" value="'+(l.kcal??'')+'"></label></div>';
   h+='<div><div style="font-size:14px;font-weight:600;color:var(--muted);margin-bottom:6px">¿Cómo te resultó?</div><div class="effs">'+[1,2,3,4,5].map(e=>'<button type="button" data-x="eff" data-v="'+e+'" class="'+(es.eff===e?'on':'')+'"><i style="background:var(--e'+e+')"></i>'+EFF[e]+'</button>').join('')+'</div></div>';
   h+='<label>Notas<textarea id="l-notes" placeholder="Cómo te encontraste, el recorrido, el tiempo…">'+esc(l.notes||'')+'</textarea></label>';
@@ -787,7 +789,7 @@ function saveLog(){
   const wasDone=a.done;a.done=true;save();closeSheet();render();
   toast(wasDone?'Registro actualizado':cheer(a));
 }
-function cheer(a){const t=T[a.type];const l=a.log||{};if(t.walk&&l.km)return '¡Hecho! '+nf(l.km)+' km más en tus piernas';return '¡'+nm(a)+': hecho!'}
+function cheer(a){const t=T[a.type];const l=a.log||{};if(t.dist&&l.km)return '¡Hecho! '+nf(l.km)+' km más en tus piernas';return '¡'+nm(a)+': hecho!'}
 function openGoal(id){
   const g=id?S.goals.find(x=>x.id===id):{kind:'comfort_km',title:'',target:5};
   es={gid:id};
@@ -822,7 +824,7 @@ document.addEventListener('click',e=>{
     case 'log':openLog(v);break;
     case 'check':{const a=S.acts.find(y=>y.id===v);if(!a)break;
       if(a.done){openLog(v);break}
-      if(T[a.type].walk){openLog(v);break}
+      if(T[a.type].dist){openLog(v);break}
       a.done=true;save();render();toast(cheer(a)+' · toca para añadir notas');break}
     case 'close':closeSheet();break;
     case 'etype':es.type=v;document.querySelectorAll('.types button').forEach(y=>y.classList.toggle('on',y.dataset.v===v));syncType();break;
